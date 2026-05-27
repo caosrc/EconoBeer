@@ -1,0 +1,49 @@
+2026-05-27T11:35:16.854Z	Initializing build environment...
+2026-05-27T11:35:18.224Z	Success: Finished initializing build environment
+2026-05-27T11:35:18.793Z	Cloning repository...
+2026-05-27T11:35:20.518Z	Restoring from dependencies cache
+2026-05-27T11:35:20.522Z	Restoring from build output cache
+2026-05-27T11:35:21.426Z	Detected the following tools from environment: nodejs@20.20.2, npm@10.9.2
+2026-05-27T11:35:21.427Z	Installing nodejs 20.20.2
+2026-05-27T11:35:25.427Z	Installing project dependencies: npm clean-install --progress=false
+2026-05-27T11:35:33.939Z	npm warn deprecated recharts@2.15.4: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
+2026-05-27T11:35:35.023Z	
+2026-05-27T11:35:35.023Z	added 312 packages, and audited 313 packages in 9s
+2026-05-27T11:35:35.023Z	
+2026-05-27T11:35:35.023Z	58 packages are looking for funding
+2026-05-27T11:35:35.023Z	  run `npm fund` for details
+2026-05-27T11:35:35.030Z	
+2026-05-27T11:35:35.030Z	2 moderate severity vulnerabilities
+2026-05-27T11:35:35.030Z	
+2026-05-27T11:35:35.030Z	To address all issues (including breaking changes), run:
+2026-05-27T11:35:35.030Z	  npm audit fix --force
+2026-05-27T11:35:35.030Z	
+2026-05-27T11:35:35.030Z	Run `npm audit` for details.
+2026-05-27T11:35:35.227Z	Executing user build command: npm run build
+2026-05-27T11:35:35.487Z	
+2026-05-27T11:35:35.488Z	> econobeer@0.0.0 build
+2026-05-27T11:35:35.489Z	> tsc && vite build
+2026-05-27T11:35:35.489Z	
+2026-05-27T11:35:38.699Z	vite v5.4.21 building for production...
+2026-05-27T11:35:38.761Z	transforming...
+2026-05-27T11:35:42.185Z	✓ 1957 modules transformed.
+2026-05-27T11:35:42.475Z	rendering chunks...
+2026-05-27T11:35:42.486Z	computing gzip size...
+2026-05-27T11:35:42.502Z	dist/index.html                   2.40 kB │ gzip:   0.94 kB
+2026-05-27T11:35:42.502Z	dist/assets/index-Cxj-c_uz.css   23.56 kB │ gzip:   5.42 kB
+2026-05-27T11:35:42.502Z	dist/assets/index-DwjmSwKE.js   377.81 kB │ gzip: 116.62 kB
+2026-05-27T11:35:42.507Z	✓ built in 3.77s
+2026-05-27T11:35:42.559Z	Success: Build command completed
+2026-05-27T11:35:42.728Z	Executing user deploy command: npx wrangler pages deploy dist
+2026-05-27T11:35:44.093Z	npm warn exec The following package was not found and will be installed: wrangler@4.86.0
+2026-05-27T11:35:55.692Z	
+2026-05-27T11:35:55.692Z	 ⛅️ wrangler 4.86.0
+2026-05-27T11:35:55.692Z	───────────────────
+2026-05-27T11:35:55.715Z	
+2026-05-27T11:35:55.772Z	✘ [ERROR] Running configuration file validation for Pages:
+2026-05-27T11:35:55.773Z	
+2026-05-27T11:35:55.773Z	    - Configuration file for Pages projects does not support "assets"
+2026-05-27T11:35:55.773Z	
+2026-05-27T11:35:55.773Z	
+2026-05-27T11:35:55.882Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-05-27_11-35-55_366.log"
+2026-05-27T11:35:56.034Z	Failed: error occurred while running deploy command
