@@ -2,13 +2,56 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/beer-icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>EconoBeer - Qual Cerveja Compensa Mais?</title>
-    <meta name="description" content="Compare preços de cerveja, calcule custo por ml, teor alcoólico e descubra qual cerveja realmente compensa!" />
+    <meta name="description" content="Compare preços de cerveja, calcule custo por ml, tonturômetro e descubra qual cerveja realmente compensa!" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Ícones -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-128.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EconoBeer" />
+
+    <!-- Android / Chrome -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="EconoBeer" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#f59e0b" />
+    <meta name="msapplication-TileColor" content="#1a0f00" />
+    <meta name="msapplication-TileImage" content="/icon-144.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="EconoBeer - Qual Cerveja Compensa Mais?" />
+    <meta property="og:description" content="Compare preços de cerveja, calcule custo por ml e descubra qual cerveja realmente compensa!" />
+    <meta property="og:image" content="/icon-512.png" />
+
+    <!-- Splash screen iOS (cor de fundo enquanto carrega) -->
+    <style>
+      html, body { background-color: #1a0f00; margin: 0; padding: 0; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js")
+            .then(reg => console.log("SW registrado:", reg.scope))
+            .catch(err => console.warn("SW falhou:", err));
+        });
+      }
+    </script>
   </body>
 </html>
