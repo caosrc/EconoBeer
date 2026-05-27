@@ -1,0 +1,106 @@
+Socrates.resende@gmail.com's Account
+Página inicial da conta
+
+Recentes
+
+
+
+
+
+
+Domínios
+Observe
+
+Investigate
+
+Análise
+Build
+
+Computação
+
+IA
+
+Armazenamento e bancos de dados
+
+Mídia
+Proteja e conecte
+
+Segurança do aplicativo
+Zero Trust
+
+Rede
+
+Entrega e desempenho
+
+Gerenciar conta
+Membros
+Cobrança
+Tokens de API da conta
+Logs de auditoria
+Notificações
+Configuração compartilhada
+Alfa
+Conteúdo bloqueado
+Relatórios de abuso
+Beta
+Relatório de impacto de carbono
+Configurações
+Etiquetas de recursos
+Beta
+Configurações
+Configurações
+Preferências
+Páginas de erro
+Configurações de DNS
+Listas
+Formulário de Envio de Bots
+ASNs de feed de ameaças DDoS
+Nome da conta
+Socrates.resende@gmail.com's Account
+Preferência de e-mail para contato sobre relatório de abuso
+Este endereço de email é onde a Cloudflare encaminhará informações sobre possíveis abusos encontrados em seus sites.
+Adendo ao Processamento de Dados
+O Adendo ao Processamento de Dados da Cloudflare está incorporado em nosso 
+Contrato de Assinatura de Autoatendimento
+ e em nossos 
+Termos de Serviço de Assinatura Corporativa padrão
+. Para clientes com contratos Enterprise negociados, é possível obter uma cópia de seu Adendo ao Processamento de Dados entrando em contato com seu representante da Conta.
+Permissão de edição
+
+Conceda 
+acesso de edição ao suporte da Cloudflare
+ a esta conta.
+Assistente de IA da Cloudy para segurança de aplicações
+
+Use um assistente de IA que analisa padrões de tráfego suspeito, identifica ameaças de segurança e ajuda a criar regras de segurança.
+Suporte
+Status do sistema
+Carreiras
+Termos de uso
+Relatar problemas de segurança
+Política de Privacidade
+Uma pílula azul e branca com uma marca de seleção e um x, representando as opções de privacidade.Preferências de cookies
+© 2026 Cloudflare, Inc.
+Need more help?
+
+Good morning.
+What are we doing today?
+
+
+Environment variables
+Add or update secrets
+
+Deploy a Worker
+Help me get started
+
+Encrypted Client Hello
+Enable ECH for my zone
+
+Create an API token
+Set up API access
+
+Transfer a domain
+Walk me through the process
+Chats are recorded to improve the service and are processed in accordance with our Privacy Policy.
+
+What can we help you with?
