@@ -1,0 +1,179 @@
+Socrates.resende@gmail.com's Account
+Página inicial da conta
+
+Recentes
+
+
+
+
+
+
+Domínios
+Observe
+
+Investigate
+
+Análise
+Build
+
+Computação
+Workers e Pages
+Observability
+Workers for Platforms
+Containers
+Durable Objects
+Queues
+Fluxos de trabalho
+Execução do navegador
+VPC
+Beta
+
+Serviço de hospedagem de email
+Planos do Workers
+Carro-chefe
+Beta
+
+IA
+
+Armazenamento e bancos de dados
+
+Mídia
+Proteja e conecte
+
+Segurança do aplicativo
+Zero Trust
+
+Rede
+
+Entrega e desempenho
+
+Gerenciar conta
+Workers e Pages
+Workers e Pages
+Crie e implante funções serverless, sites e aplicações full-stack.
+
+Pesquisar aplicativos
+all
+last_modified
+econobeer
+Falha na última build
+↗
+econobeer.socrates-resende.workers.dev
+caosrc/EconoBeer
+11 h atrás
+
+Update build script to resolve Cloudflare API authentication errors The build script was updated to fix an authentication error with the Cloudflare API token, ensuring proper deployment permissions for Cloudflare Pages. Replit-Commit-Author: Agent Replit-Commit-Session-Id: d2ea8400-0704-4aca-91e9-bf7582f30163 Replit-Commit-Checkpoint-Type: full_checkpoint Replit-Commit-Event-Id:
+11 h atrás
+
+8 Solicitações
+
+
+0,3 ms
+
+ufsj-vistorias
+ufsj-vistorias.pages.dev
+caosrc/ufsj-vistorias
+16 h atrás
+
+Allow editing property inspection reports with updated measures and dates Add functionality to edit existing property inspection reports, including date, time, and measurement values. This involves frontend UI updates for editing and saving, as well as a backend API endpoint to persist the changes. Replit-Commit-Author: Agent Replit-Commit-Session-Id: 0e1d16a1-0dd0-462c-aaa6-f2a8279fcbfa Replit-Commit-Checkpoint-Type: full_checkpoint Replit-Commit-Event-Id: ca90d144-ef0c-44b2-bfa2-d4c35763e9bb Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/86143b29-c442-4f58-b432-2f1d4b41f4be/0e1d16a1-0dd0-462c-aaa6-f2a8279fcbfa/6Cpsa8u Replit-Helium-Checkpoint-Created: true
+16 h atrás
+
+geovistorias-api
+geovistorias-api.socrates-resende.workers.dev
+16 h atrás
+
+Exibir implantações ↗
+464 Solicitações
+
+
+1,9 ms
+
+defesacivil
+defesacivil-5up.pages.dev
+caosrc/defesacivil
+19 h atrás
+
+Update service worker to ensure users access the latest app version Increment service worker version to 'v12-2026-05-supabase-fix' to invalidate cache and enforce loading of the updated application build. Replit-Commit-Author: Agent Replit-Commit-Session-Id: 3057e3dd-a091-4a29-be38-77d5c9f66e46 Replit-Commit-Checkpoint-Type: full_checkpoint Replit-Commit-Event-Id: c6e2175b-3b87-455e-a743-0bcbbd826076 Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/b4336225-c64e-42e6-96a2-6025e734819b/3057e3dd-a091-4a29-be38-77d5c9f66e46/h0Gjn1D Replit-Helium-Checkpoint-Created: true
+19 h atrás
+
+geovistorias
+Falha na última build
+↗
+geovistorias.socrates-resende.workers.dev
+caosrc/ufsj-vistorias
+10 d atrás
+
+Allow editing property inspection reports with updated measures and dates Add functionality to edit existing property inspection reports, including date, time, and measurement values. This involves frontend UI updates for editing and saving, as well as a backend API endpoint to persist the changes. Replit-Commit-Author: Agent Replit-Commit-Session-Id: 0e1d16a1-0dd0-462c-aaa6-f2a8
+16 h atrás
+
+— Solicitações
+
+defesacivil
+Falha na última build
+↗
+defesacivil.socrates-resende.workers.dev
+caosrc/defesacivil
+25 d atrás
+
+Update service worker to ensure users access the latest app version Increment service worker version to 'v12-2026-05-supabase-fix' to invalidate cache and enforce loading of the updated application build. Replit-Commit-Author: Agent Replit-Commit-Session-Id: 3057e3dd-a091-4a29-be38-77d5c9f66e46 Replit-Commit-Checkpoint-Type: full_checkpoint Replit-Commit-Event-Id: c6e2175b-3b87-4
+19 h atrás
+
+— Solicitações
+
+Mostrando 1-6 de 6
+1
+Uso
+May 1 - May 28
+Minutos de compilação do Workers este mês
+69 / 3.000
+
+Solicitações
+2,36k
+
+Tempo da CPU
+4.347 ms
+
+Eventos de Observability
+0
+
+Workers build mins
+69
+Account Details
+Account ID
+
+47420566e97c97a628fff971a16f33c7
+
+Subdomínio
+
+socrates-resende.workers.dev
+Suporte
+Status do sistema
+Carreiras
+Termos de uso
+Relatar problemas de segurança
+Política de Privacidade
+Uma pílula azul e branca com uma marca de seleção e um x, representando as opções de privacidade.Preferências de cookies
+© 2026 Cloudflare, Inc.
+Need more help?
+
+Good morning.
+What are we doing today?
+
+
+Find my account ID
+Locate account and zone IDs
+
+Encrypted Client Hello
+Enable ECH for my zone
+
+Deploy a Worker
+Help me get started
+
+Environment variables
+Add or update secrets
+
+Orange vs Gray Cloud
+What is the difference?
+Chats are recorded to improve the service and are processed in accordance with our Privacy Policy.
+
+What can we help you with?
