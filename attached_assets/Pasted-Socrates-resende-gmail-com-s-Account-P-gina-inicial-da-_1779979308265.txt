@@ -1,0 +1,160 @@
+Socrates.resende@gmail.com's Account
+Página inicial da conta
+
+Recentes
+
+
+
+
+
+
+Domínios
+Observe
+
+Investigate
+
+Análise
+Build
+
+Computação
+Workers e Pages
+Observability
+Workers for Platforms
+Containers
+Durable Objects
+Queues
+Fluxos de trabalho
+Execução do navegador
+VPC
+Beta
+
+Serviço de hospedagem de email
+Planos do Workers
+Carro-chefe
+Beta
+
+IA
+
+Armazenamento e bancos de dados
+
+Mídia
+Proteja e conecte
+
+Segurança do aplicativo
+Zero Trust
+
+Rede
+
+Entrega e desempenho
+
+Gerenciar conta
+Workers e Pages
+econobeer
+Visão geral
+Métrica
+Implantações
+Associações
+Observability
+Domínios
+Configurações
+Falha na última build
+econobeer.socrates-resende.workers.dev
+Automatic deployment on upload.
+caosrc/EconoBeer
+por socrates.resende
+1 dia atrás
+econobeer
+
+Observability
+Logs do Workers
+
+Desativado
+Rastreamentos do Workers
+
+Desativado
+Adicionar uma vinculação
+Métrica
+Último 24 horas
+
+Solicitações
+9
+900.00%
+
+Erros
+0
+
+Tempo da CPU
+0,42
+ms
+42.10%
+Distribuição e Localização
+Localização: Padrão
+© OpenStreetMap
+
+Versões
+524e0c99
+Implantado manualmente
+Painel
+
+por socrates.resende
+1 d atrás
+10372255
+Implantado manualmente
+Painel
+
+por socrates.resende
+1 d atrás
+Domínios e rotas
+workers.dev
+econobeer.socrates-resende.workers.dev
+
+Domínios personalizados
+—
+
+Rotas
+—
+
+Próximas etapas
+Conecte um domínio personalizado
+
+Use seu próprio domínio para servir seu Worker para obter uma aparência profissional.
+
+Habilitar observabilidade
+
+Monitore o desempenho do seu worker com logs e rastreamento.
+
+Armazene seus dados
+
+Conecte o armazenamento KV, D1 ou R2 para persistir os dados nas solicitações.
+
+Suporte
+Status do sistema
+Carreiras
+Termos de uso
+Relatar problemas de segurança
+Política de Privacidade
+Uma pílula azul e branca com uma marca de seleção e um x, representando as opções de privacidade.Preferências de cookies
+© 2026 Cloudflare, Inc.
+Need more help?
+
+Good morning.
+What are we doing today?
+
+
+Orange vs Gray Cloud
+What is the difference?
+
+Environment variables
+Add or update secrets
+
+Domain settings
+Show my configuration
+
+Transfer a domain
+Walk me through the process
+
+Create an API token
+Set up API access
+Chats are recorded to improve the service and are processed in accordance with our Privacy Policy.
+
+What can we help you with?
