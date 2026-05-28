@@ -7,7 +7,6 @@ app.use(express.json());
 
 const PORT = 3001;
 
-// Headers que imitam um browser real
 const BROWSER_HEADERS = {
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
   "Accept": "application/json, text/html,application/xhtml+xml,*/*;q=0.9",
@@ -17,9 +16,7 @@ const BROWSER_HEADERS = {
   "Pragma": "no-cache",
 };
 
-// ─────────────────────────────────────────────────────────────
-// LOJAS: mapeamento cidade → lojas disponíveis
-// ─────────────────────────────────────────────────────────────
+// ─── Lojas nacionais (entregam em todo Brasil) ───────────────────────────────
 const LOJAS_NACIONAIS = [
   {
     nome: "Carrefour",
@@ -55,7 +52,27 @@ const LOJAS_NACIONAIS = [
   },
 ];
 
+// ─── Lojas por estado ────────────────────────────────────────────────────────
 const LOJAS_POR_ESTADO = {
+  MG: [
+    ...LOJAS_NACIONAIS,
+    {
+      nome: "BH Supermercados",
+      tipo: "supermercado",
+      logo: "🟠",
+      url: "https://www.bhsuper.com.br",
+      buscarUrl: (q) => `https://www.bhsuper.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=19`,
+      tipo_api: "vtex",
+    },
+    {
+      nome: "Epa Supermercados",
+      tipo: "supermercado",
+      logo: "🟡",
+      url: "https://www.epa.com.br",
+      buscarUrl: (q) => `https://www.epa.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=19`,
+      tipo_api: "vtex",
+    },
+  ],
   SP: [
     ...LOJAS_NACIONAIS,
     {
@@ -78,7 +95,6 @@ const LOJAS_POR_ESTADO = {
       tipo_api: "vtex",
     },
   ],
-  MG: [...LOJAS_NACIONAIS],
   PR: [
     ...LOJAS_NACIONAIS,
     {
@@ -115,12 +131,17 @@ const LOJAS_POR_ESTADO = {
 };
 
 function getLojasParaEstado(estado) {
-  return LOJAS_POR_ESTADO[estado] ?? LOJAS_NACIONAIS;
+  return LOJAS_POR_ESTADO[estado?.toUpperCase()] ?? LOJAS_NACIONAIS;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Parser VTEX — formato padrão do Pão de Açúcar, Carrefour, etc.
-// ─────────────────────────────────────────────────────────────
+function extractVolume(nome) {
+  const matchMl = nome.match(/(\d+(?:\.\d+)?)\s*ml/i);
+  const matchL = nome.match(/(\d+(?:[.,]\d+)?)\s*(?:litros?|l\b)/i);
+  if (matchMl) return parseFloat(matchMl[1]);
+  if (matchL) return parseFloat(matchL[1].replace(",", ".")) * 1000;
+  return null;
+}
+
 function parseVTEX(data, loja) {
   if (!Array.isArray(data)) return [];
   return data
@@ -131,27 +152,20 @@ function parseVTEX(data, loja) {
         if (!preco || preco <= 0) return null;
 
         const nome = item.productName ?? item.name ?? "";
-        const imagem = item?.items?.[0]?.images?.[0]?.imageUrl ?? "";
-        const link = item.link ?? item.linkText
+        const imagem = (item?.items?.[0]?.images?.[0]?.imageUrl ?? "").replace("http://", "https://");
+        const link = item.linkText
           ? `${loja.url}/${item.linkText}/p`
-          : loja.url;
-        const precoOriginal = offer?.ListPrice !== preco ? offer?.ListPrice : null;
-
-        // Extrai volume do nome
-        let volume = null;
-        const matchMl = nome.match(/(\d+(?:\.\d+)?)\s*ml/i);
-        const matchL = nome.match(/(\d+(?:[.,]\d+)?)\s*(?:litros?|l\b)/i);
-        if (matchMl) volume = parseFloat(matchMl[1]);
-        else if (matchL) volume = parseFloat(matchL[1].replace(",", ".")) * 1000;
+          : (item.link ?? loja.url);
+        const precoOriginal = offer?.ListPrice && offer.ListPrice !== preco ? offer.ListPrice : null;
 
         return {
           id: item.productId ?? String(Math.random()),
           nome,
           preco: Number(preco.toFixed(2)),
           precoOriginal: precoOriginal ? Number(precoOriginal.toFixed(2)) : null,
-          imagem: imagem.replace("http://", "https://"),
+          imagem,
           link,
-          volume,
+          volume: extractVolume(nome),
           loja: loja.nome,
           tipoLoja: loja.tipo,
           logoLoja: loja.logo,
@@ -164,12 +178,9 @@ function parseVTEX(data, loja) {
     .filter(Boolean);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Busca em uma loja com timeout
-// ─────────────────────────────────────────────────────────────
 async function buscarNaLoja(loja, busca) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(() => controller.abort(), 9000);
 
   try {
     const url = loja.buscarUrl(busca);
@@ -179,7 +190,7 @@ async function buscarNaLoja(loja, busca) {
     });
 
     if (!res.ok) {
-      return { loja: loja.nome, sucesso: false, erro: `HTTP ${res.status}`, produtos: [] };
+      return { loja: loja.nome, tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url, sucesso: false, erro: `HTTP ${res.status}`, produtos: [] };
     }
 
     const data = await res.json();
@@ -197,6 +208,9 @@ async function buscarNaLoja(loja, busca) {
   } catch (err) {
     return {
       loja: loja.nome,
+      tipoLoja: loja.tipo,
+      logoLoja: loja.logo,
+      urlLoja: loja.url,
       sucesso: false,
       erro: err.name === "AbortError" ? "timeout" : err.message,
       produtos: [],
@@ -206,18 +220,12 @@ async function buscarNaLoja(loja, busca) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Endpoint principal: GET /api/buscar?cidade=X&estado=Y&q=cerveja
-// ─────────────────────────────────────────────────────────────
+// ─── GET /api/buscar?cidade=X&estado=Y&q=cerveja ─────────────────────────────
 app.get("/api/buscar", async (req, res) => {
-  const { cidade = "", estado = "", q = "cerveja" } = req.query;
+  const { cidade = "", estado = "MG", q = "cerveja" } = req.query;
 
-  const lojas = getLojasParaEstado(estado.toUpperCase());
-
-  // Faz todas as buscas em paralelo
-  const resultados = await Promise.allSettled(
-    lojas.map((loja) => buscarNaLoja(loja, q))
-  );
+  const lojas = getLojasParaEstado(estado);
+  const resultados = await Promise.allSettled(lojas.map((loja) => buscarNaLoja(loja, q)));
 
   const lojaResultados = resultados
     .map((r) => (r.status === "fulfilled" ? r.value : null))
@@ -226,7 +234,6 @@ app.get("/api/buscar", async (req, res) => {
   const lojasSucesso = lojaResultados.filter((r) => r.sucesso && r.produtos.length > 0);
   const lojasFalha = lojaResultados.filter((r) => !r.sucesso || r.produtos.length === 0);
 
-  // Melhor preço por produto (comparação entre lojas)
   const todosOsProdutos = lojasSucesso.flatMap((l) => l.produtos);
   const melhoresPorNome = {};
   for (const p of todosOsProdutos) {
@@ -251,7 +258,6 @@ app.get("/api/buscar", async (req, res) => {
   });
 });
 
-// Endpoint de saúde
 app.get("/api/health", (_, res) => res.json({ ok: true }));
 
 app.listen(PORT, "0.0.0.0", () => {

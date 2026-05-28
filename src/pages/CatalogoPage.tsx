@@ -1,34 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, ChevronRight, Loader2, ExternalLink,
-  X, Truck, AlertCircle, RefreshCw, Search,
-  ShoppingBag, Trophy, TrendingDown, Store,
+  X, AlertCircle, RefreshCw, Search,
+  Trophy, TrendingDown, Navigation, ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { cn } from "@/lib/utils";
 import { buscarBebidas, type BuscarResponse, type ProdutoLoja, type LojaResultado } from "@/lib/api";
 
-const CIDADES_ESTADOS: Record<string, string> = {
-  "São Paulo - SP": "SP", "Rio de Janeiro - RJ": "RJ", "Belo Horizonte - MG": "MG",
-  "Curitiba - PR": "PR", "Porto Alegre - RS": "RS", "Salvador - BA": "BA",
-  "Fortaleza - CE": "CE", "Recife - PE": "PE", "Brasília - DF": "DF",
-  "Manaus - AM": "AM", "Belém - PA": "PA", "Goiânia - GO": "GO",
-  "Florianópolis - SC": "SC", "Campinas - SP": "SP", "Vitória - ES": "ES",
-  "Natal - RN": "RN", "Maceió - AL": "AL", "Campo Grande - MS": "MS",
-  "Teresina - PI": "PI", "João Pessoa - PB": "PB",
-  "Conselheiro Lafaiete - MG": "MG", "Ouro Preto - MG": "MG",
-  "Uberlândia - MG": "MG", "Juiz de Fora - MG": "MG",
-  "Ribeirão Preto - SP": "SP", "Santos - SP": "SP",
-  "São José dos Campos - SP": "SP", "Londrina - PR": "PR",
-  "Maringá - PR": "PR", "Joinville - SC": "SC",
+export const CIDADES_ESTADOS: Record<string, string> = {
+  "Ouro Branco - MG": "MG",
+  "São Paulo - SP": "SP",
+  "Rio de Janeiro - RJ": "RJ",
+  "Belo Horizonte - MG": "MG",
+  "Curitiba - PR": "PR",
+  "Porto Alegre - RS": "RS",
+  "Salvador - BA": "BA",
+  "Fortaleza - CE": "CE",
+  "Recife - PE": "PE",
+  "Brasília - DF": "DF",
+  "Manaus - AM": "AM",
+  "Belém - PA": "PA",
+  "Goiânia - GO": "GO",
+  "Florianópolis - SC": "SC",
+  "Campinas - SP": "SP",
+  "Vitória - ES": "ES",
+  "Natal - RN": "RN",
+  "Maceió - AL": "AL",
+  "Campo Grande - MS": "MS",
+  "Teresina - PI": "PI",
+  "João Pessoa - PB": "PB",
+  "Conselheiro Lafaiete - MG": "MG",
+  "Ouro Preto - MG": "MG",
+  "Uberlândia - MG": "MG",
+  "Juiz de Fora - MG": "MG",
+  "Ribeirão Preto - SP": "SP",
+  "Santos - SP": "SP",
+  "São José dos Campos - SP": "SP",
+  "Londrina - PR": "PR",
+  "Maringá - PR": "PR",
+  "Joinville - SC": "SC",
+  "Montes Claros - MG": "MG",
+  "Contagem - MG": "MG",
+  "Betim - MG": "MG",
+  "Itabira - MG": "MG",
+  "Congonhas - MG": "MG",
 };
-const TODAS_CIDADES = Object.keys(CIDADES_ESTADOS).sort();
+
+const TODAS_CIDADES = Object.keys(CIDADES_ESTADOS).sort((a, b) => {
+  if (a === "Ouro Branco - MG") return -1;
+  if (b === "Ouro Branco - MG") return 1;
+  return a.localeCompare(b, "pt-BR");
+});
+
+const CIDADE_PADRAO = "Ouro Branco - MG";
 
 const CIDADES_RAPIDAS = [
-  "São Paulo - SP", "Rio de Janeiro - RJ", "Belo Horizonte - MG",
-  "Curitiba - PR", "Porto Alegre - RS",
+  "Ouro Branco - MG",
+  "Belo Horizonte - MG",
+  "São Paulo - SP",
+  "Rio de Janeiro - RJ",
+  "Curitiba - PR",
 ];
 
 const BUSCAS_RAPIDAS = [
@@ -37,7 +71,7 @@ const BUSCAS_RAPIDAS = [
   { label: "🟡 Skol", q: "cerveja skol" },
   { label: "🍃 Heineken", q: "heineken" },
   { label: "🎉 Kit/Fardo", q: "fardo cerveja" },
-  { label: "🍹 Drinks", q: "bebida alcoolica ready" },
+  { label: "🍹 Drinks", q: "bebida alcoolica" },
 ];
 
 function custoPorMl(p: ProdutoLoja): number | null {
@@ -45,8 +79,16 @@ function custoPorMl(p: ProdutoLoja): number | null {
   return p.preco / p.volume;
 }
 
+function linkGoogleMaps(cidade: string, busca: string) {
+  return `https://www.google.com/maps/search/${encodeURIComponent(busca + " em " + cidade)}`;
+}
+
+function linkGoogleBusca(cidade: string, busca: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(busca + " preço " + cidade)}`;
+}
+
 export default function CatalogoPage() {
-  const [inputCidade, setInputCidade] = useState("");
+  const [inputCidade, setInputCidade] = useState(CIDADE_PADRAO);
   const [sugestoes, setSugestoes] = useState<string[]>([]);
   const [cidadeSelecionada, setCidadeSelecionada] = useState<string | null>(null);
   const [buscaAtual, setBuscaAtual] = useState("cerveja");
@@ -58,12 +100,19 @@ export default function CatalogoPage() {
   const [comparando, setComparando] = useState<ProdutoLoja[]>([]);
   const [verComparacao, setVerComparacao] = useState(false);
   const [stepMsg, setStepMsg] = useState("");
+  const [produtoDetalhes, setProdutoDetalhes] = useState<ProdutoLoja | null>(null);
+
+  useEffect(() => {
+    buscar(CIDADE_PADRAO, "cerveja");
+  }, []);
 
   const onInput = (v: string) => {
     setInputCidade(v);
-    setSugestoes(v.length >= 2
-      ? TODAS_CIDADES.filter(c => c.toLowerCase().includes(v.toLowerCase())).slice(0, 7)
-      : []);
+    setSugestoes(
+      v.length >= 2
+        ? TODAS_CIDADES.filter(c => c.toLowerCase().includes(v.toLowerCase())).slice(0, 8)
+        : []
+    );
   };
 
   const buscar = async (cidade: string, q = buscaAtual) => {
@@ -75,18 +124,22 @@ export default function CatalogoPage() {
     setDados(null);
     setComparando([]);
     setMsgErro("");
+    setProdutoDetalhes(null);
 
-    const estado = CIDADES_ESTADOS[cidade] ?? "";
+    const estado = CIDADES_ESTADOS[cidade] ?? "MG";
     const steps = [
-      `Abrindo catálogos de ${cidade}...`,
-      "Entrando no site do Carrefour...",
+      `Abrindo catálogos para ${cidade}...`,
+      "Consultando Carrefour...",
       "Consultando Pão de Açúcar...",
-      "Buscando no Extra...",
+      "Verificando Extra e Americanas...",
       "Comparando preços...",
     ];
     let i = 0;
     setStepMsg(steps[0]);
-    const tick = setInterval(() => { i = Math.min(i + 1, steps.length - 1); setStepMsg(steps[i]); }, 1200);
+    const tick = setInterval(() => {
+      i = Math.min(i + 1, steps.length - 1);
+      setStepMsg(steps[i]);
+    }, 1200);
 
     try {
       const res = await buscarBebidas(cidade, estado, q);
@@ -107,8 +160,12 @@ export default function CatalogoPage() {
   };
 
   const limpar = () => {
-    setInputCidade(""); setSugestoes([]); setCidadeSelecionada(null);
-    setStatus("idle"); setDados(null); setComparando([]);
+    setInputCidade("");
+    setSugestoes([]);
+    setCidadeSelecionada(null);
+    setStatus("idle");
+    setDados(null);
+    setComparando([]);
   };
 
   const toggleComparando = (p: ProdutoLoja) => {
@@ -140,7 +197,7 @@ export default function CatalogoPage() {
             <MapPin size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <input
               type="text"
-              placeholder="Digite a cidade... ex: Belo Horizonte - MG"
+              placeholder="Digite a cidade... ex: Ouro Branco - MG"
               value={inputCidade}
               onChange={e => onInput(e.target.value)}
               disabled={status === "buscando"}
@@ -162,8 +219,11 @@ export default function CatalogoPage() {
                   <button key={c} onClick={() => buscar(c)}
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-border/60 transition-colors text-left"
                     data-testid={`sug-${c}`}>
-                    <MapPin size={13} className="text-blue-400 flex-shrink-0" />
-                    <span className="text-sm text-foreground flex-1">{c}</span>
+                    <MapPin size={13} className={cn("flex-shrink-0", c === CIDADE_PADRAO ? "text-primary" : "text-blue-400")} />
+                    <span className="text-sm text-foreground flex-1">
+                      {c}
+                      {c === CIDADE_PADRAO && <span className="ml-2 text-xs text-primary font-medium">⭐ Principal</span>}
+                    </span>
                     <ChevronRight size={13} className="text-muted-foreground" />
                   </button>
                 ))}
@@ -171,13 +231,18 @@ export default function CatalogoPage() {
             )}
           </AnimatePresence>
 
-          {status === "idle" && !inputCidade && (
+          {status === "idle" && !cidadeSelecionada && (
             <div className="mt-3 space-y-2">
-              <p className="text-xs text-muted-foreground">Cidades populares:</p>
+              <p className="text-xs text-muted-foreground">Cidades disponíveis:</p>
               <div className="flex flex-wrap gap-1.5">
                 {CIDADES_RAPIDAS.map(c => (
                   <button key={c} onClick={() => buscar(c)}
-                    className="text-xs bg-secondary hover:bg-border px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors"
+                    className={cn(
+                      "text-xs px-3 py-1.5 rounded-full transition-colors",
+                      c === CIDADE_PADRAO
+                        ? "bg-primary/20 text-primary border border-primary/30 font-medium"
+                        : "bg-secondary hover:bg-border text-muted-foreground hover:text-foreground"
+                    )}
                     data-testid={`cidade-${c}`}>{c}</button>
                 ))}
               </div>
@@ -211,7 +276,7 @@ export default function CatalogoPage() {
                   className="text-blue-300 text-sm mt-1">{stepMsg}</motion.p>
               </div>
               <p className="text-muted-foreground text-xs">
-                Entrando nos catálogos online de <strong className="text-foreground">{cidadeSelecionada}</strong> e buscando: <strong className="text-blue-300">"{buscaAtual}"</strong>
+                Buscando <strong className="text-blue-300">"{buscaAtual}"</strong> para <strong className="text-foreground">{cidadeSelecionada}</strong>
               </p>
               <div className="h-1 bg-secondary rounded-full overflow-hidden">
                 <motion.div animate={{ x: ["-100%", "100%"] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -225,16 +290,24 @@ export default function CatalogoPage() {
         <AnimatePresence>
           {status === "erro" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="bg-red-900/20 border border-red-500/40 rounded-2xl p-5 text-center space-y-2">
+              className="bg-red-900/20 border border-red-500/40 rounded-2xl p-5 text-center space-y-3">
               <AlertCircle size={28} className="text-red-400 mx-auto" />
               <p className="text-red-300 text-sm">{msgErro}</p>
-              {cidadeSelecionada && (
-                <button onClick={() => buscar(cidadeSelecionada)}
-                  className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 mt-1"
-                  data-testid="btn-tentar-novamente">
-                  <RefreshCw size={14} /> Tentar novamente
-                </button>
-              )}
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                {cidadeSelecionada && (
+                  <button onClick={() => buscar(cidadeSelecionada)}
+                    className="inline-flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-900/20 px-4 py-2 rounded-xl"
+                    data-testid="btn-tentar-novamente">
+                    <RefreshCw size={14} /> Tentar novamente
+                  </button>
+                )}
+                {cidadeSelecionada && (
+                  <a href={linkGoogleBusca(cidadeSelecionada, buscaAtual)} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 text-sm text-green-400 hover:text-green-300 bg-green-900/20 px-4 py-2 rounded-xl">
+                    <Search size={14} /> Buscar no Google
+                  </a>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -249,9 +322,9 @@ export default function CatalogoPage() {
                 <div>
                   <span className="font-display text-xl text-foreground">📍 {dados.cidade}</span>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {dados.totalProdutos} produtos em {dados.totalLojas} loja{dados.totalLojas !== 1 ? "s" : ""} •{" "}
+                    {dados.totalProdutos} produtos em {dados.totalLojas} loja{dados.totalLojas !== 1 ? "s" : ""}
                     {dados.lojasFalha.length > 0 && (
-                      <span className="text-yellow-500">{dados.lojasFalha.length} site{dados.lojasFalha.length !== 1 ? "s" : ""} indisponível{dados.lojasFalha.length !== 1 ? "eis" : ""}</span>
+                      <> · <span className="text-yellow-500">{dados.lojasFalha.length} site{dados.lojasFalha.length !== 1 ? "s" : ""} indisponível</span></>
                     )}
                   </p>
                 </div>
@@ -263,6 +336,22 @@ export default function CatalogoPage() {
                     <TrendingDown size={12} /> Comparar {comparando.length}
                   </motion.button>
                 )}
+              </div>
+
+              {/* Busca no Google Maps */}
+              <div className="flex gap-2">
+                <a href={linkGoogleMaps(dados.cidade, buscaAtual)} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-secondary hover:bg-border text-muted-foreground hover:text-foreground text-xs px-3 py-2.5 rounded-xl border border-border transition-colors"
+                  data-testid="btn-ver-mapa">
+                  <Navigation size={13} className="text-blue-400" />
+                  Ver lojas físicas no Maps
+                </a>
+                <a href={linkGoogleBusca(dados.cidade, buscaAtual)} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-secondary hover:bg-border text-muted-foreground hover:text-foreground text-xs px-3 py-2.5 rounded-xl border border-border transition-colors"
+                  data-testid="btn-google-busca">
+                  <Search size={13} className="text-green-400" />
+                  Buscar preços no Google
+                </a>
               </div>
 
               {/* Sites que não responderam */}
@@ -279,22 +368,29 @@ export default function CatalogoPage() {
                 <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <Trophy size={16} className="text-yellow-400" />
-                    <span className="text-green-400 font-bold text-sm">Melhores preços agora em {dados.cidade}</span>
+                    <span className="text-green-400 font-bold text-sm">Melhores preços — {dados.cidade}</span>
                   </div>
                   <div className="space-y-2">
-                    {dados.melhoresPrecos.slice(0, 5).map((p, i) => {
+                    {dados.melhoresPrecos.slice(0, 6).map((p, i) => {
                       const cpm = custoPorMl(p);
                       return (
-                        <div key={p.id + i} className="flex items-center gap-3">
-                          <span className="text-muted-foreground text-xs w-4">{i + 1}.</span>
-                          <span className="text-foreground text-xs flex-1 truncate">{p.nome.slice(0, 42)}</span>
+                        <div key={p.id + i} className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-xs w-4 flex-shrink-0">{i + 1}.</span>
+                          <button
+                            onClick={() => setProdutoDetalhes(p)}
+                            className="text-foreground text-xs flex-1 truncate text-left hover:text-primary transition-colors"
+                          >
+                            {p.nome.slice(0, 42)}
+                          </button>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <span className="text-green-400 font-bold text-sm">R${p.preco.toFixed(2)}</span>
                             {cpm && <span className="text-muted-foreground text-xs hidden sm:inline">R${(cpm * 100).toFixed(2)}/100ml</span>}
                             <span className="text-xs text-muted-foreground">{p.logoLoja}</span>
                             <a href={p.link} target="_blank" rel="noopener noreferrer"
-                              className="text-blue-400 hover:text-blue-300">
-                              <ExternalLink size={12} />
+                              className="w-7 h-7 bg-primary rounded-full flex items-center justify-center hover:opacity-80 flex-shrink-0"
+                              data-testid={`comprar-melhor-${i}`}
+                              title="Comprar">
+                              <ShoppingCart size={12} className="text-primary-foreground" />
                             </a>
                           </div>
                         </div>
@@ -314,28 +410,41 @@ export default function CatalogoPage() {
                     <motion.div key={loja.loja} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.06 }}
                       className="bg-card border border-border rounded-2xl overflow-hidden">
-                      <button
-                        onClick={() => { setLojaAberta(loja); setFiltroProduto(""); }}
-                        className="w-full p-4 flex items-center gap-4 hover:bg-secondary/30 transition-colors text-left"
-                        data-testid={`btn-loja-${idx}`}>
-                        <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-                          {loja.logoLoja}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-foreground">{loja.loja}</span>
-                            <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-muted-foreground capitalize">{loja.tipoLoja}</span>
+                      <div className="p-4 flex items-center gap-4">
+                        <button
+                          onClick={() => { setLojaAberta(loja); setFiltroProduto(""); }}
+                          className="flex items-center gap-4 flex-1 min-w-0 text-left"
+                          data-testid={`btn-loja-${idx}`}>
+                          <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                            {loja.logoLoja}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            {loja.totalEncontrado} produto{loja.totalEncontrado !== 1 ? "s" : ""} encontrado{loja.totalEncontrado !== 1 ? "s" : ""}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-semibold text-foreground">{loja.loja}</span>
+                              <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-muted-foreground capitalize">{loja.tipoLoja}</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-0.5">
+                              {loja.totalEncontrado} produto{loja.totalEncontrado !== 1 ? "s" : ""}
+                            </div>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className="text-xs text-green-400 font-medium">A partir de R${menorPreco.toFixed(2)}</span>
+                              <span className="text-xs text-muted-foreground">até R${maiorPreco.toFixed(2)}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-xs text-green-400 font-medium">A partir de R${menorPreco.toFixed(2)}</span>
-                            <span className="text-xs text-muted-foreground">até R${maiorPreco.toFixed(2)}</span>
-                          </div>
-                        </div>
-                        <ChevronRight size={18} className="text-muted-foreground flex-shrink-0" />
-                      </button>
+                          <ChevronRight size={18} className="text-muted-foreground flex-shrink-0" />
+                        </button>
+                        <a
+                          href={linkGoogleMaps(cidadeSelecionada ?? "", loja.loja)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          className="flex-shrink-0 w-9 h-9 bg-secondary hover:bg-border rounded-xl flex items-center justify-center transition-colors"
+                          title={`Ver ${loja.loja} no Maps`}
+                          data-testid={`maps-loja-${idx}`}
+                        >
+                          <Navigation size={15} className="text-blue-400" />
+                        </a>
+                      </div>
                     </motion.div>
                   );
                 })}
@@ -344,6 +453,88 @@ export default function CatalogoPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ── Modal: detalhes do produto ── */}
+      <AnimatePresence>
+        {produtoDetalhes && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            onClick={() => setProdutoDetalhes(null)}>
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 280 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-card border border-border rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden">
+              <div className="p-5 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3 items-start flex-1 min-w-0">
+                    {produtoDetalhes.imagem
+                      ? <img src={produtoDetalhes.imagem} alt="" className="w-16 h-16 object-contain rounded-xl bg-white/5 flex-shrink-0"
+                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      : <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-3xl flex-shrink-0">🍺</div>
+                    }
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground leading-snug">{produtoDetalhes.nome}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{produtoDetalhes.logoLoja} {produtoDetalhes.loja}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setProdutoDetalhes(null)} className="text-muted-foreground hover:text-foreground flex-shrink-0">
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-secondary rounded-xl p-3 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Preço</p>
+                    <p className="text-xl font-bold text-primary">R${produtoDetalhes.preco.toFixed(2)}</p>
+                    {produtoDetalhes.precoOriginal && produtoDetalhes.precoOriginal > produtoDetalhes.preco && (
+                      <p className="text-xs text-muted-foreground line-through">R${produtoDetalhes.precoOriginal.toFixed(2)}</p>
+                    )}
+                  </div>
+                  <div className="bg-secondary rounded-xl p-3 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Custo/100ml</p>
+                    {custoPorMl(produtoDetalhes)
+                      ? <p className="text-xl font-bold text-foreground">R${(custoPorMl(produtoDetalhes)! * 100).toFixed(2)}</p>
+                      : <p className="text-sm text-muted-foreground mt-1">–</p>
+                    }
+                  </div>
+                </div>
+
+                {produtoDetalhes.volume && (
+                  <div className="bg-secondary rounded-xl p-3 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Volume</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {produtoDetalhes.volume >= 1000
+                        ? `${(produtoDetalhes.volume / 1000).toFixed(1).replace(".0", "")}L`
+                        : `${produtoDetalhes.volume}ml`}
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <a href={produtoDetalhes.link} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold rounded-xl py-3 text-sm hover:opacity-90 transition-opacity"
+                    data-testid="btn-comprar-detalhe">
+                    <ShoppingCart size={15} /> Comprar
+                  </a>
+                  <a href={linkGoogleMaps(cidadeSelecionada ?? "", produtoDetalhes.loja)} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-secondary text-foreground font-medium rounded-xl py-3 text-sm hover:bg-border transition-colors border border-border"
+                    data-testid="btn-mapa-detalhe">
+                    <Navigation size={15} className="text-blue-400" /> Ver no Maps
+                  </a>
+                </div>
+
+                <button
+                  onClick={() => { toggleComparando(produtoDetalhes); setProdutoDetalhes(null); }}
+                  className="w-full flex items-center justify-center gap-2 border border-blue-500/50 text-blue-400 rounded-xl py-2.5 text-sm hover:bg-blue-900/20 transition-colors"
+                  data-testid="btn-adicionar-comparar">
+                  <TrendingDown size={14} />
+                  {comparando.find(x => x.id === produtoDetalhes.id) ? "Remover da comparação" : "Adicionar à comparação"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Modal: produtos de uma loja ── */}
       <AnimatePresence>
@@ -362,10 +553,16 @@ export default function CatalogoPage() {
                     <span className="text-2xl">{lojaAberta.logoLoja}</span>
                     <div>
                       <div className="font-semibold text-foreground">{lojaAberta.loja}</div>
-                      <a href={lojaAberta.urlLoja} target="_blank" rel="noopener noreferrer"
-                        className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                        {lojaAberta.urlLoja} <ExternalLink size={10} />
-                      </a>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <a href={lojaAberta.urlLoja} target="_blank" rel="noopener noreferrer"
+                          className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                          {lojaAberta.urlLoja} <ExternalLink size={10} />
+                        </a>
+                        <a href={linkGoogleMaps(cidadeSelecionada ?? "", lojaAberta.loja)} target="_blank" rel="noopener noreferrer"
+                          className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1">
+                          <Navigation size={10} /> Ver endereço
+                        </a>
+                      </div>
                     </div>
                   </div>
                   <button onClick={() => setLojaAberta(null)} className="text-muted-foreground hover:text-foreground" data-testid="btn-fechar-loja">
@@ -389,7 +586,7 @@ export default function CatalogoPage() {
                     const cpm = custoPorMl(p);
                     return (
                       <motion.div key={p.id} whileTap={{ scale: 0.98 }}
-                        className={cn("flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all",
+                        className={cn("flex items-center gap-3 p-3 rounded-xl border transition-all",
                           isSel ? "border-blue-500 bg-blue-900/20" : "border-border bg-secondary hover:bg-secondary/60")}
                         data-testid={`prod-${p.id}`}>
                         {p.imagem
@@ -397,7 +594,7 @@ export default function CatalogoPage() {
                               onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                           : <div className="w-14 h-14 rounded-lg bg-secondary/50 flex items-center justify-center text-2xl flex-shrink-0">🍺</div>
                         }
-                        <div className="flex-1 min-w-0" onClick={() => toggleComparando(p)}>
+                        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { setProdutoDetalhes(p); setLojaAberta(null); }}>
                           <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{p.nome}</p>
                           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                             <span className="text-primary font-bold">R${p.preco.toFixed(2)}</span>
@@ -411,11 +608,12 @@ export default function CatalogoPage() {
                           <a href={p.link} target="_blank" rel="noopener noreferrer"
                             onClick={e => e.stopPropagation()}
                             className="w-9 h-9 bg-primary rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
-                            data-testid={`comprar-${p.id}`}>
-                            <ExternalLink size={14} className="text-primary-foreground" />
+                            data-testid={`comprar-${p.id}`}
+                            title="Comprar">
+                            <ShoppingCart size={14} className="text-primary-foreground" />
                           </a>
                           <div onClick={() => toggleComparando(p)}
-                            className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
+                            className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer",
                               isSel ? "border-blue-500 bg-blue-500" : "border-border")}>
                             {isSel && <span className="text-white text-xs leading-none">✓</span>}
                           </div>
@@ -453,7 +651,7 @@ export default function CatalogoPage() {
               <div className="p-4 border-b border-border flex items-center justify-between flex-shrink-0">
                 <div>
                   <h3 className="font-display text-2xl text-foreground">Comparação Real</h3>
-                  <p className="text-xs text-muted-foreground">Preços coletados agora dos sites</p>
+                  <p className="text-xs text-muted-foreground">Preços coletados dos sites agora</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setComparando([])} className="text-xs text-destructive" data-testid="btn-limpar-comp">Limpar</button>
@@ -499,11 +697,20 @@ export default function CatalogoPage() {
                             </p>
                           )}
                         </div>
-                        <a href={p.link} target="_blank" rel="noopener noreferrer"
-                          className="w-9 h-9 bg-primary rounded-full flex items-center justify-center hover:opacity-80 flex-shrink-0 self-center"
-                          data-testid={`comprar-comp-${p.id}`}>
-                          <ExternalLink size={14} className="text-primary-foreground" />
-                        </a>
+                        <div className="flex flex-col gap-2 flex-shrink-0">
+                          <a href={p.link} target="_blank" rel="noopener noreferrer"
+                            className="w-9 h-9 bg-primary rounded-full flex items-center justify-center hover:opacity-80 self-center"
+                            data-testid={`comprar-comp-${p.id}`}
+                            title="Comprar">
+                            <ShoppingCart size={14} className="text-primary-foreground" />
+                          </a>
+                          <a href={linkGoogleMaps(cidadeSelecionada ?? "", p.loja)} target="_blank" rel="noopener noreferrer"
+                            className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center hover:bg-border transition-colors border border-border self-center"
+                            data-testid={`maps-comp-${p.id}`}
+                            title="Ver no Maps">
+                            <Navigation size={14} className="text-blue-400" />
+                          </a>
+                        </div>
                       </div>
                     </motion.div>
                   );

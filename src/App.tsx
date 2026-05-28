@@ -5,6 +5,7 @@ import ComparadorPage from "./pages/ComparadorPage";
 import TonturometroPage from "./pages/TonturometroPage";
 import CatalogoPage from "./pages/CatalogoPage";
 import RolePage from "./pages/RolePage";
+import SuportePage from "./pages/SuportePage";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/tonturometro" component={TonturometroPage} />
         <Route path="/catalogo" component={CatalogoPage} />
         <Route path="/role" component={RolePage} />
+        <Route path="/suporte" component={SuportePage} />
       </Switch>
       <Toaster richColors position="top-right" />
     </>

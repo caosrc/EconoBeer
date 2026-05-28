@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Beer, Calculator, Zap, BookOpen, Users } from "lucide-react";
+import { Calculator, Zap, BookOpen, Users, HeadphonesIcon } from "lucide-react";
 
 const menuItems = [
   {
@@ -114,11 +114,44 @@ export default function HomePage() {
           ))}
         </div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55, duration: 0.4 }}
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full max-w-2xl mt-4"
+        >
+          <Link href="/suporte">
+            <div
+              className="relative overflow-hidden rounded-2xl bg-card border border-border p-5 cursor-pointer group"
+              data-testid="menu-card-suporte"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-500 to-slate-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+              <div className="flex items-center gap-4">
+                <div className="text-3xl p-2 rounded-xl bg-gradient-to-br from-slate-500 to-slate-400 bg-opacity-10">
+                  🛠️
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-display text-2xl text-foreground tracking-wide">
+                    Suporte
+                  </h2>
+                  <p className="text-muted-foreground text-sm mt-0.5">
+                    Contato do desenvolvedor
+                  </p>
+                </div>
+                <HeadphonesIcon size={18} className="text-muted-foreground flex-shrink-0" />
+              </div>
+              <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-slate-500 to-slate-400 transition-all duration-300" />
+            </div>
+          </Link>
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-muted-foreground text-xs mt-10 text-center max-w-sm"
+          className="text-muted-foreground text-xs mt-8 text-center max-w-sm"
         >
           ⚠️ Beba com responsabilidade. O EconoBeer não se responsabiliza por
           decisões tomadas após o 3º copo.

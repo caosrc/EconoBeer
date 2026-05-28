@@ -7,13 +7,6 @@ const BROWSER_HEADERS = {
 
 const LOJAS_NACIONAIS = [
   {
-    nome: "Americanas",
-    tipo: "supermercado",
-    logo: "🔴",
-    url: "https://www.americanas.com.br",
-    buscarUrl: (q) => `https://www.americanas.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=29`,
-  },
-  {
     nome: "Carrefour",
     tipo: "supermercado",
     logo: "🔵",
@@ -34,9 +27,33 @@ const LOJAS_NACIONAIS = [
     url: "https://www.extra.com.br",
     buscarUrl: (q) => `https://www.extra.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=29`,
   },
+  {
+    nome: "Americanas",
+    tipo: "supermercado",
+    logo: "🔴",
+    url: "https://www.americanas.com.br",
+    buscarUrl: (q) => `https://www.americanas.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=29`,
+  },
 ];
 
 const LOJAS_POR_ESTADO = {
+  MG: [
+    ...LOJAS_NACIONAIS,
+    {
+      nome: "BH Supermercados",
+      tipo: "supermercado",
+      logo: "🟠",
+      url: "https://www.bhsuper.com.br",
+      buscarUrl: (q) => `https://www.bhsuper.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=19`,
+    },
+    {
+      nome: "Epa Supermercados",
+      tipo: "supermercado",
+      logo: "🟡",
+      url: "https://www.epa.com.br",
+      buscarUrl: (q) => `https://www.epa.com.br/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=0&_to=19`,
+    },
+  ],
   SP: [
     ...LOJAS_NACIONAIS,
     {
@@ -90,7 +107,7 @@ const LOJAS_POR_ESTADO = {
 };
 
 function getLojasParaEstado(estado) {
-  return LOJAS_POR_ESTADO[estado] ?? LOJAS_NACIONAIS;
+  return LOJAS_POR_ESTADO[estado?.toUpperCase()] ?? LOJAS_NACIONAIS;
 }
 
 function extractVolume(nome) {
@@ -137,18 +154,18 @@ function parseVTEX(data, loja) {
 
 async function buscarNaLoja(loja, busca) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
+  const timer = setTimeout(() => controller.abort(), 9000);
   try {
     const res = await fetch(loja.buscarUrl(busca), {
       headers: BROWSER_HEADERS,
       signal: controller.signal,
     });
-    if (!res.ok) return { loja: loja.nome, sucesso: false, erro: `HTTP ${res.status}`, produtos: [], tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url };
+    if (!res.ok) return { loja: loja.nome, tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url, sucesso: false, erro: `HTTP ${res.status}`, produtos: [] };
     const data = await res.json();
     const produtos = parseVTEX(data, loja);
     return { loja: loja.nome, tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url, sucesso: true, produtos, totalEncontrado: produtos.length };
   } catch (err) {
-    return { loja: loja.nome, sucesso: false, erro: err.name === "AbortError" ? "timeout" : err.message, produtos: [], tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url };
+    return { loja: loja.nome, tipoLoja: loja.tipo, logoLoja: loja.logo, urlLoja: loja.url, sucesso: false, erro: err.name === "AbortError" ? "timeout" : err.message, produtos: [] };
   } finally {
     clearTimeout(timer);
   }
@@ -157,10 +174,10 @@ async function buscarNaLoja(loja, busca) {
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const cidade = url.searchParams.get("cidade") ?? "";
-  const estado = url.searchParams.get("estado") ?? "";
+  const estado = url.searchParams.get("estado") ?? "MG";
   const q = url.searchParams.get("q") ?? "cerveja";
 
-  const lojas = getLojasParaEstado(estado.toUpperCase());
+  const lojas = getLojasParaEstado(estado);
   const resultados = await Promise.allSettled(lojas.map((l) => buscarNaLoja(l, q)));
   const lojaResultados = resultados.map((r) => r.status === "fulfilled" ? r.value : null).filter(Boolean);
 
@@ -178,7 +195,9 @@ export async function onRequestGet(context) {
   const melhoresPrecos = Object.values(melhoresPorNome).sort((a, b) => a.preco - b.preco).slice(0, 8);
 
   const body = JSON.stringify({
-    cidade, estado, busca: q,
+    cidade,
+    estado,
+    busca: q,
     totalLojas: lojasSucesso.length,
     totalProdutos: todosOsProdutos.length,
     lojas: lojasSucesso,
