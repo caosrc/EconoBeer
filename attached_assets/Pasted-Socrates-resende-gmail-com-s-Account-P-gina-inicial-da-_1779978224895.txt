@@ -1,0 +1,157 @@
+Socrates.resende@gmail.com's Account
+Página inicial da conta
+
+Recentes
+
+
+
+
+
+
+Domínios
+Observe
+
+Investigate
+
+Análise
+Build
+
+Computação
+Workers e Pages
+Observability
+Workers for Platforms
+Containers
+Durable Objects
+Queues
+Fluxos de trabalho
+Execução do navegador
+VPC
+Beta
+
+Serviço de hospedagem de email
+Planos do Workers
+Carro-chefe
+Beta
+
+IA
+
+Armazenamento e bancos de dados
+
+Mídia
+Proteja e conecte
+
+Segurança do aplicativo
+Zero Trust
+
+Rede
+
+Entrega e desempenho
+
+Gerenciar conta
+Workers e Pages
+econobeer
+Visão geral
+Métrica
+Implantações
+Associações
+Observability
+Domínios
+Configurações
+Falha na última build
+Variáveis e segredos
+Defina as variáveis de ambiente e segredos para seu Worker usado em tempo de execução
+
+Configurar tokens de API e outras variáveis de tempo de execução
+Disparar eventos
+Defina os eventos que acionam o Worker
+
+Configure maneiras de invocar seu Worker por meio de tarefas agendadas e eventos de mensagens
+Observabilidade
+Colete logs e rastreamentos para depurar seu Worker, persista no painel ou exporte para provedores externos
+
+Logs no Workers
+Desabilitado
+Rastreamentos dos Workers
+desativada
+Exportações
+Desabilitado
+Amostragem
+Desabilitado
+Tail Worker
+Nenhum Tail Worker conectado
+Tempo de execução
+Posicionamento
+Padrão
+Data de compatibilidade
+May 27, 2026
+Sinalizadores de compatibilidade
+Nenhuma sinalização definida
+Build
+Conecte seu Worker a um repositório Git para compilações e implantações automáticas
+
+Sua última build falhou.
+Visualizar build
+
+Repositório Git
+caosrc/EconoBeer
+Configuração da build
+Comando da build:npm run build
+Comando de implantação:npx wrangler pages deploy dist --project-name econobeer
+Comando da versão:npx wrangler versions upload
+Diretório raiz:/
+Controle da ramificação
+Ramificação de produção:main
+Compilações para ramificações de não produção:Habilitado
+Compilar caminhos de inspeção
+Incluir caminhos:
+*
+Token de API
+Nome:defesacivil build token
+Variáveis e segredos
+Nenhum
+Ganchos de implantação
+Nenhum gancho de implantação definido
+Cache da build
+Habilitado (Limpar cache)
+Geral
+Nome
+econobeer
+Exclua permanentemente todos os arquivos, configurações, versões e implantações associadas a esse Worker.
+Variáveis e segredos
+Disparar eventos
+Observabilidade
+Tempo de execução
+Build
+Geral
+Configuração do Workers
+Suporte
+Status do sistema
+Carreiras
+Termos de uso
+Relatar problemas de segurança
+Política de Privacidade
+Uma pílula azul e branca com uma marca de seleção e um x, representando as opções de privacidade.Preferências de cookies
+© 2026 Cloudflare, Inc.
+Need more help?
+
+Good morning.
+What are we doing today?
+
+
+Find my account ID
+Locate account and zone IDs
+
+Encrypted Client Hello
+Enable ECH for my zone
+
+Deploy a Worker
+Help me get started
+
+Environment variables
+Add or update secrets
+
+Orange vs Gray Cloud
+What is the difference?
+Chats are recorded to improve the service and are processed in accordance with our Privacy Policy.
+
+What can we help you with?
