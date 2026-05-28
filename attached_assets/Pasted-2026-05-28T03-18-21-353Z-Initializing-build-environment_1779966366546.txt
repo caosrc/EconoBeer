@@ -1,0 +1,63 @@
+2026-05-28T03:18:21.353Z	Initializing build environment...
+2026-05-28T03:18:23.526Z	Success: Finished initializing build environment
+2026-05-28T03:18:24.229Z	Cloning repository...
+2026-05-28T03:18:26.777Z	Restoring from dependencies cache
+2026-05-28T03:18:26.781Z	Restoring from build output cache
+2026-05-28T03:18:28.112Z	Detected the following tools from environment: nodejs@20.20.2, npm@10.9.2
+2026-05-28T03:18:28.113Z	Installing nodejs 20.20.2
+2026-05-28T03:18:34.314Z	Installing project dependencies: npm clean-install --progress=false
+2026-05-28T03:18:50.015Z	npm warn deprecated recharts@2.15.4: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
+2026-05-28T03:18:52.746Z	
+2026-05-28T03:18:52.746Z	added 312 packages, and audited 313 packages in 18s
+2026-05-28T03:18:52.747Z	
+2026-05-28T03:18:52.747Z	58 packages are looking for funding
+2026-05-28T03:18:52.747Z	  run `npm fund` for details
+2026-05-28T03:18:52.755Z	
+2026-05-28T03:18:52.756Z	2 moderate severity vulnerabilities
+2026-05-28T03:18:52.756Z	
+2026-05-28T03:18:52.756Z	To address all issues (including breaking changes), run:
+2026-05-28T03:18:52.756Z	  npm audit fix --force
+2026-05-28T03:18:52.756Z	
+2026-05-28T03:18:52.756Z	Run `npm audit` for details.
+2026-05-28T03:18:53.094Z	Executing user build command: npm run build
+2026-05-28T03:18:53.600Z	
+2026-05-28T03:18:53.600Z	> econobeer@0.0.0 build
+2026-05-28T03:18:53.600Z	> tsc && vite build
+2026-05-28T03:18:53.600Z	
+2026-05-28T03:19:00.235Z	vite v5.4.21 building for production...
+2026-05-28T03:19:00.371Z	transforming...
+2026-05-28T03:19:07.954Z	✓ 1958 modules transformed.
+2026-05-28T03:19:08.669Z	rendering chunks...
+2026-05-28T03:19:08.698Z	computing gzip size...
+2026-05-28T03:19:08.748Z	dist/index.html                   2.40 kB │ gzip:   0.94 kB
+2026-05-28T03:19:08.748Z	dist/assets/index-mCM1sLS9.css   24.88 kB │ gzip:   5.64 kB
+2026-05-28T03:19:08.748Z	dist/assets/index-o1RZhTp6.js   391.22 kB │ gzip: 119.15 kB
+2026-05-28T03:19:08.749Z	✓ built in 8.45s
+2026-05-28T03:19:08.863Z	Success: Build command completed
+2026-05-28T03:19:09.130Z	Executing user deploy command: npx wrangler pages deploy dist --project-name econobeer
+2026-05-28T03:19:11.968Z	npm warn exec The following package was not found and will be installed: wrangler@4.86.0
+2026-05-28T03:19:37.589Z	
+2026-05-28T03:19:37.589Z	 ⛅️ wrangler 4.86.0
+2026-05-28T03:19:37.589Z	───────────────────
+2026-05-28T03:19:38.125Z	
+2026-05-28T03:19:38.226Z	✘ [ERROR] A request to the Cloudflare API (/accounts/47420566e97c97a628fff971a16f33c7/pages/projects/econobeer) failed.
+2026-05-28T03:19:38.227Z	
+2026-05-28T03:19:38.227Z	  Authentication error [code: 10000]
+2026-05-28T03:19:38.228Z	
+2026-05-28T03:19:38.228Z	
+2026-05-28T03:19:38.228Z	📎 It looks like you are authenticating Wrangler via a custom API token set in an environment variable.
+2026-05-28T03:19:38.228Z	Please ensure it has the correct permissions for this operation.
+2026-05-28T03:19:38.229Z	
+2026-05-28T03:19:38.239Z	Getting User settings...
+2026-05-28T03:19:38.670Z	👋 You are logged in with an User API Token, associated with the email socrates.resende@gmail.com.
+2026-05-28T03:19:38.670Z	ℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.
+2026-05-28T03:19:38.676Z	┌──────────────────────────────────────┬──────────────────────────────────┐
+2026-05-28T03:19:38.677Z	│ Account Name                         │ Account ID                       │
+2026-05-28T03:19:38.677Z	├──────────────────────────────────────┼──────────────────────────────────┤
+2026-05-28T03:19:38.677Z	│ Socrates.resende@gmail.com's Account │ 47420566e97c97a628fff971a16f33c7 │
+2026-05-28T03:19:38.677Z	└──────────────────────────────────────┴──────────────────────────────────┘
+2026-05-28T03:19:38.677Z	🔓 To see token permissions visit https://dash.cloudflare.com/profile/api-tokens.
+2026-05-28T03:19:38.866Z	🎢 Membership roles in "Socrates.resende@gmail.com's Account": Contact account super admin to change your permissions.
+2026-05-28T03:19:38.866Z	- Super Administrator - All Privileges
+2026-05-28T03:19:38.894Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-05-28_03-19-37_022.log"
+2026-05-28T03:19:38.993Z	Failed: error occurred while running deploy command
