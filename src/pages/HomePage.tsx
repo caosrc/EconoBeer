@@ -1,6 +1,7 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { Calculator, Zap, Users, HeadphonesIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calculator, Zap, Users, HeadphonesIcon, Download, Share, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const menuItems = [
   {
@@ -28,11 +29,54 @@ const menuItems = [
     titulo: "Modo Rolê",
     subtitulo: "Calcula pra toda a galera",
     cor: "from-green-500 to-emerald-400",
-    delay: 0.4,
+    delay: 0.3,
   },
 ];
 
+function useInstallPrompt() {
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const standalone = (window.navigator as any).standalone === true ||
+      window.matchMedia("(display-mode: standalone)").matches;
+
+    setIsIOS(ios);
+    setIsInstalled(standalone);
+    setDismissed(!!localStorage.getItem("pwa-dismissed"));
+
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const install = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") setIsInstalled(true);
+    setInstallPrompt(null);
+  };
+
+  const dismiss = () => {
+    localStorage.setItem("pwa-dismissed", "1");
+    setDismissed(true);
+  };
+
+  const showBanner = !isInstalled && !dismissed && (installPrompt || isIOS);
+
+  return { install, dismiss, isIOS, showBanner };
+}
+
 export default function HomePage() {
+  const { install, dismiss, isIOS, showBanner } = useInstallPrompt();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-6">
@@ -108,7 +152,7 @@ export default function HomePage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.4 }}
+          transition={{ delay: 0.45, duration: 0.4 }}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.97 }}
           className="w-full max-w-2xl mt-4"
@@ -148,6 +192,52 @@ export default function HomePage() {
           decisões tomadas após o 3º copo.
         </motion.p>
       </div>
+
+      {/* Banner de instalação PWA */}
+      <AnimatePresence>
+        {showBanner && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-4 left-4 right-4 z-50"
+          >
+            <div className="bg-card border border-primary/30 rounded-2xl p-4 shadow-2xl flex items-center gap-3">
+              <img src="/icon-72.png" alt="EconoBeer" className="w-12 h-12 rounded-xl flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-foreground font-semibold text-sm">Instalar EconoBeer</p>
+                {isIOS ? (
+                  <p className="text-muted-foreground text-xs mt-0.5">
+                    Toque em <Share size={10} className="inline" /> e depois <strong>"Adicionar à Tela Inicial"</strong>
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground text-xs mt-0.5">
+                    Funciona offline, rápido como app nativo
+                  </p>
+                )}
+              </div>
+              {!isIOS && (
+                <button
+                  onClick={install}
+                  data-testid="button-install-pwa"
+                  className="flex-shrink-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1"
+                >
+                  <Download size={14} />
+                  Instalar
+                </button>
+              )}
+              <button
+                onClick={dismiss}
+                data-testid="button-dismiss-pwa"
+                className="flex-shrink-0 text-muted-foreground p-1"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
