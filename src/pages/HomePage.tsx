@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Zap, Users, HeadphonesIcon, Download, Share, X } from "lucide-react";
+import { Calculator, Zap, Users, HeadphonesIcon, Download, Share2, Wifi, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const menuItems = [
@@ -37,16 +37,22 @@ function useInstallPrompt() {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [showChoice, setShowChoice] = useState(false);
+  const [iosInstructions, setIosInstructions] = useState(false);
 
   useEffect(() => {
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const standalone = (window.navigator as any).standalone === true ||
+    const standalone =
+      (window.navigator as any).standalone === true ||
       window.matchMedia("(display-mode: standalone)").matches;
+    const dismissed = !!localStorage.getItem("pwa-choice-made");
 
     setIsIOS(ios);
     setIsInstalled(standalone);
-    setDismissed(!!localStorage.getItem("pwa-dismissed"));
+
+    if (!standalone && !dismissed) {
+      setTimeout(() => setShowChoice(true), 800);
+    }
 
     const handler = (e: Event) => {
       e.preventDefault();
@@ -57,25 +63,40 @@ function useInstallPrompt() {
   }, []);
 
   const install = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === "accepted") setIsInstalled(true);
-    setInstallPrompt(null);
+    if (isIOS) {
+      setIosInstructions(true);
+      return;
+    }
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === "accepted") {
+        setIsInstalled(true);
+        setShowChoice(false);
+        localStorage.setItem("pwa-choice-made", "1");
+      }
+    } else {
+      // Chrome ainda não disparou o evento — mostra instrução genérica
+      setIosInstructions(true);
+    }
   };
 
-  const dismiss = () => {
-    localStorage.setItem("pwa-dismissed", "1");
-    setDismissed(true);
+  const useOnline = () => {
+    localStorage.setItem("pwa-choice-made", "1");
+    setShowChoice(false);
   };
 
-  const showBanner = !isInstalled && !dismissed && (installPrompt || isIOS);
+  const closeIos = () => {
+    setIosInstructions(false);
+    localStorage.setItem("pwa-choice-made", "1");
+    setShowChoice(false);
+  };
 
-  return { install, dismiss, isIOS, showBanner };
+  return { install, useOnline, closeIos, isIOS, showChoice, iosInstructions, isInstalled };
 }
 
 export default function HomePage() {
-  const { install, dismiss, isIOS, showBanner } = useInstallPrompt();
+  const { install, useOnline, closeIos, isIOS, showChoice, iosInstructions } = useInstallPrompt();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -97,7 +118,8 @@ export default function HomePage() {
             EconoBeer
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl font-medium">
-            Beba mais, gaste menos. <span className="text-primary">Cientificamente.</span>
+            Beba mais, gaste menos.{" "}
+            <span className="text-primary">Cientificamente.</span>
           </p>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -193,49 +215,147 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Banner de instalação PWA */}
+      {/* Modal de escolha: instalar ou usar online */}
       <AnimatePresence>
-        {showBanner && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-4 left-4 right-4 z-50"
-          >
-            <div className="bg-card border border-primary/30 rounded-2xl p-4 shadow-2xl flex items-center gap-3">
-              <img src="/icon-72.png" alt="EconoBeer" className="w-12 h-12 rounded-xl flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-foreground font-semibold text-sm">Instalar EconoBeer</p>
-                {isIOS ? (
-                  <p className="text-muted-foreground text-xs mt-0.5">
-                    Toque em <Share size={10} className="inline" /> e depois <strong>"Adicionar à Tela Inicial"</strong>
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground text-xs mt-0.5">
-                    Funciona offline, rápido como app nativo
-                  </p>
-                )}
+        {showChoice && !iosInstructions && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-40"
+              onClick={useOnline}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border rounded-t-3xl p-6 pb-10"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <img
+                  src="/icon-72.png"
+                  alt="EconoBeer"
+                  className="w-14 h-14 rounded-2xl flex-shrink-0"
+                />
+                <div>
+                  <h2 className="font-display text-2xl text-foreground">EconoBeer</h2>
+                  <p className="text-muted-foreground text-sm">Como você quer usar?</p>
+                </div>
               </div>
-              {!isIOS && (
-                <button
+
+              <div className="space-y-3">
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
                   onClick={install}
-                  data-testid="button-install-pwa"
-                  className="flex-shrink-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1"
+                  data-testid="button-install-app"
+                  className="w-full bg-primary text-primary-foreground rounded-2xl p-4 flex items-center gap-4 text-left"
                 >
-                  <Download size={14} />
-                  Instalar
+                  <div className="bg-white/20 p-2 rounded-xl flex-shrink-0">
+                    <Download size={22} />
+                  </div>
+                  <div>
+                    <div className="font-bold text-base">Instalar o app</div>
+                    <div className="text-sm opacity-80">
+                      Funciona offline, ícone na tela inicial, mais rápido
+                    </div>
+                  </div>
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={useOnline}
+                  data-testid="button-use-online"
+                  className="w-full bg-secondary border border-border text-foreground rounded-2xl p-4 flex items-center gap-4 text-left"
+                >
+                  <div className="bg-primary/10 p-2 rounded-xl flex-shrink-0 text-primary">
+                    <Wifi size={22} />
+                  </div>
+                  <div>
+                    <div className="font-bold text-base">Usar online</div>
+                    <div className="text-sm text-muted-foreground">
+                      Continuar pelo navegador, sem instalar
+                    </div>
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Instruções para iOS / Chrome sem prompt */}
+      <AnimatePresence>
+        {iosInstructions && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-40"
+              onClick={closeIos}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border rounded-t-3xl p-6 pb-10"
+            >
+              <div className="flex justify-between items-start mb-5">
+                <div>
+                  <h2 className="font-display text-2xl text-foreground">Instalar EconoBeer</h2>
+                  <p className="text-muted-foreground text-sm">Siga os passos abaixo</p>
+                </div>
+                <button onClick={closeIos} className="text-muted-foreground p-1" data-testid="button-close-ios">
+                  <X size={20} />
                 </button>
-              )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                  <div>
+                    <p className="text-foreground font-medium">
+                      {isIOS ? "Toque no botão Compartilhar" : "Abra o menu do navegador"}
+                    </p>
+                    <p className="text-muted-foreground text-sm mt-0.5">
+                      {isIOS
+                        ? <>O ícone <Share2 size={12} className="inline" /> na barra inferior do Safari</>
+                        : "Toque nos 3 pontos no canto do Chrome"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                  <div>
+                    <p className="text-foreground font-medium">
+                      {isIOS ? "Toque em "Adicionar à Tela Inicial"" : "Toque em "Adicionar à tela inicial""}
+                    </p>
+                    <p className="text-muted-foreground text-sm mt-0.5">Role a lista até encontrar a opção</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                  <div>
+                    <p className="text-foreground font-medium">Toque em "Adicionar"</p>
+                    <p className="text-muted-foreground text-sm mt-0.5">O ícone do EconoBeer vai aparecer na sua tela inicial 🍺</p>
+                  </div>
+                </div>
+              </div>
+
               <button
-                onClick={dismiss}
-                data-testid="button-dismiss-pwa"
-                className="flex-shrink-0 text-muted-foreground p-1"
+                onClick={closeIos}
+                data-testid="button-entendi"
+                className="w-full mt-6 bg-primary text-primary-foreground font-bold rounded-2xl py-3"
               >
-                <X size={16} />
+                Entendi!
               </button>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
