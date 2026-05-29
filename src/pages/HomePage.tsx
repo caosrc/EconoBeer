@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Calculator, Zap, BookOpen, Users, HeadphonesIcon } from "lucide-react";
+import { Calculator, Zap, Users, HeadphonesIcon } from "lucide-react";
 
 const menuItems = [
   {
@@ -20,15 +20,6 @@ const menuItems = [
     subtitulo: "Qual deixa mais tonto por real?",
     cor: "from-purple-600 to-pink-500",
     delay: 0.2,
-  },
-  {
-    href: "/catalogo",
-    icon: BookOpen,
-    emoji: "🏪",
-    titulo: "Catálogo",
-    subtitulo: "Compare preços do mercado",
-    cor: "from-blue-500 to-cyan-400",
-    delay: 0.3,
   },
   {
     href: "/role",
