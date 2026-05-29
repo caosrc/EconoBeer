@@ -24,7 +24,7 @@ const CORES_BADGE: Record<string, string> = {
   branco: "#F9FAFB",
 };
 
-let idCounter = 3;
+let idCounter = 2;
 
 function novaCerveja(): Cerveja {
   idCounter++;
@@ -77,8 +77,8 @@ function calcularResultados(cervejas: Cerveja[]): ResultadoComparacao[] {
 
 export default function ComparadorPage() {
   const [cervejas, setCervejas] = useState<Cerveja[]>([
-    { id: "1", nome: "Skol", marca: "Skol", tipo: "lata", volume: 350, preco: 3.5, teorAlcoolico: 4.7, cor: "amarelo" },
-    { id: "2", nome: "Brahma", marca: "Brahma", tipo: "lata", volume: 350, preco: 3.99, teorAlcoolico: 5.0, cor: "vermelho" },
+    { id: "1", nome: "", marca: "", tipo: "lata", volume: 350, preco: 0, teorAlcoolico: 5, cor: "amarelo" },
+    { id: "2", nome: "", marca: "", tipo: "lata", volume: 350, preco: 0, teorAlcoolico: 5, cor: "amarelo" },
   ]);
   const [comparado, setComparado] = useState(false);
   const [resultados, setResultados] = useState<ResultadoComparacao[]>([]);

@@ -68,13 +68,11 @@ const BARRA_NIVEL_COR: Record<string, string> = {
   "ja-era": "bg-red-500",
 };
 
-let counter = 3;
+let counter = 1;
 
 export default function TonturometroPage() {
   const [cervejas, setCervejas] = useState<EntradaCerveja[]>([
-    { id: "1", nome: "Skol 350ml", volume: 350, preco: 3.5, teorAlcoolico: 4.7 },
-    { id: "2", nome: "Devassa Weiss 600ml", volume: 600, preco: 8.99, teorAlcoolico: 4.7 },
-    { id: "3", nome: "Heineken Long Neck", volume: 330, preco: 6.99, teorAlcoolico: 5.0 },
+    { id: "1", nome: "", volume: 350, preco: 0, teorAlcoolico: 5 },
   ]);
   const [resultados, setResultados] = useState<ResultadoTontura[]>([]);
   const [calculado, setCalculado] = useState(false);
