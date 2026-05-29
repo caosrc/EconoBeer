@@ -332,7 +332,7 @@ export default function HomePage() {
                   <div className="bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
                   <div>
                     <p className="text-foreground font-medium">
-                      {isIOS ? "Toque em "Adicionar à Tela Inicial"" : "Toque em "Adicionar à tela inicial""}
+                      {isIOS ? 'Toque em "Adicionar à Tela Inicial"' : 'Toque em "Adicionar à tela inicial"'}
                     </p>
                     <p className="text-muted-foreground text-sm mt-0.5">Role a lista até encontrar a opção</p>
                   </div>
