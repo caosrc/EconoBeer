@@ -20,13 +20,12 @@
     { "src": "/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Comparador de Preços",
       "short_name": "Comparar",
       "description": "Compare cervejas pelo preço por ml",
-      "url": "/",
+      "url": "/comparador",
       "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
     },
     {
@@ -34,13 +33,6 @@
       "short_name": "Tonturômetro",
       "description": "Calcule eficiência alcoólica",
       "url": "/tonturometro",
-      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Catálogo",
-      "short_name": "Catálogo",
-      "description": "Busque preços reais na sua cidade",
-      "url": "/catalogo",
       "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
     },
     {
