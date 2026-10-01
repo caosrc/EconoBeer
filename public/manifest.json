@@ -1,7 +1,7 @@
 {
   "name": "EconoBeer - Qual Cerveja Compensa Mais?",
   "short_name": "EconoBeer",
-  "description": "Compare preços de cerveja, calcule custo por ml, tonturômetro e descubra qual cerveja realmente compensa!",
+  "description": "Compare preços de cerveja, calcule custo por ml e descubra qual cerveja realmente compensa!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a0f00",
@@ -26,13 +26,6 @@
       "short_name": "Comparar",
       "description": "Compare cervejas pelo preço por ml",
       "url": "/comparador",
-      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Tonturômetro",
-      "short_name": "Tonturômetro",
-      "description": "Calcule eficiência alcoólica",
-      "url": "/tonturometro",
       "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
     },
     {

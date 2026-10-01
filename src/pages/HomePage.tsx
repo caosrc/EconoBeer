@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Zap, Users, HeadphonesIcon, Download, Share2, Wifi, X } from "lucide-react";
+import { Calculator, Users, HeadphonesIcon, Download, Share2, Wifi, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const menuItems = [
@@ -12,15 +12,6 @@ const menuItems = [
     subtitulo: "Qual lata compensa mais?",
     cor: "from-amber-500 to-yellow-400",
     delay: 0.1,
-  },
-  {
-    href: "/tonturometro",
-    icon: Zap,
-    emoji: "🥴",
-    titulo: "Tonturômetro",
-    subtitulo: "Qual deixa mais tonto por real?",
-    cor: "from-purple-600 to-pink-500",
-    delay: 0.2,
   },
   {
     href: "/role",
@@ -118,8 +109,7 @@ export default function HomePage() {
             EconoBeer
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl font-medium">
-            Beba mais, gaste menos.{" "}
-            <span className="text-primary">Cientificamente.</span>
+            Gaste menos
           </p>
           <motion.div
             initial={{ scaleX: 0 }}

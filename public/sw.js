@@ -1,4 +1,4 @@
-const CACHE_NAME = "econobeer-v2";
+const CACHE_NAME = "econobeer-v3";
 
 const STATIC_ASSETS = [
   "/",
